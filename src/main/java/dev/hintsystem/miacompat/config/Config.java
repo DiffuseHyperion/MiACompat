@@ -31,17 +31,6 @@ public class Config {
 
     public static final Config DEFAULTS = new Config();
 
-    // General
-    public int maxWaypointRadius = 0;
-    public boolean showBonfireWaypoint = true;
-    public boolean showCurseMeter = true;
-    public boolean showItemLoreInBundles = true;
-    public boolean showContainerCoinWorth = true;
-    public boolean showContainerExactCoinWorth = false;
-    public boolean showItemSlotGearCooldowns = false;
-    public boolean hideActionBarGearCooldowns = false;
-    public boolean hideActionBarGearAbilityFail = false;
-
     // Ghost Seek
     public boolean showGhostSeekCooldown = true;
     public boolean ghostSeekDistanceHint = true;
@@ -63,109 +52,6 @@ public class Config {
     );
 
     public Screen createScreen(Screen parent) {
-        // General
-
-        Option<Boolean> showContainerExactCoinWorthOption = Option.<Boolean>createBuilder()
-            .name(Component.literal("Show Precise Container Orth Coin Worth"))
-            .description(OptionDescription.of(Component.literal(
-                """
-                Additionally displays the exact Orth coin value with decimals.
-                
-                Useful for tracking partial coin values when you don't have enough items to complete a full trade.
-                """
-            )))
-            .binding(DEFAULTS.showContainerExactCoinWorth, () -> showContainerExactCoinWorth, val -> showContainerExactCoinWorth = val)
-            .controller(TickBoxControllerBuilder::create)
-            .build();
-
-        ConfigCategory generalCategory = ConfigCategory.createBuilder()
-            .name(Component.literal("General"))
-
-            .option(Option.<Integer>createBuilder()
-                .name(Component.literal("Max Waypoint Distance"))
-                .description(OptionDescription.of(Component.literal(
-                    """
-                    Defines the maximum distance (in meters) at which waypoints are visible.
-                    
-                    Unlike Xaero’s Minimap "Max WP Render Distance" setting, this limit also considers the waypoint’s
-                    vertical distance from the player.
-                
-                    Set to 0 to display all waypoints.
-                    """
-                )))
-                .binding(DEFAULTS.maxWaypointRadius, () -> maxWaypointRadius, val -> maxWaypointRadius = val)
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                    .formatValue(val -> Component.literal(String.format("%dm", val)))
-                    .step(100)
-                    .range(0, 10_000))
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Bonfire Waypoint"))
-                .binding(DEFAULTS.showBonfireWaypoint, () -> showBonfireWaypoint, val -> showBonfireWaypoint = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Curse Meter"))
-                .binding(DEFAULTS.showCurseMeter, () -> showCurseMeter, val -> showCurseMeter = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Item Lore in Bundles"))
-                .binding(DEFAULTS.showItemLoreInBundles, () -> showItemLoreInBundles, val -> showItemLoreInBundles = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Container Orth Coin Worth"))
-                .description(OptionDescription.of(Component.literal(
-                    """
-                    Shows the total Orth coin value in bundle and shulker box tooltips.
-                    
-                    This displays how many whole coins you'd get by selling all items inside the container at the current trade rates.
-                    """
-                )))
-                .addListener((option, event) -> {
-                    showContainerExactCoinWorthOption.setAvailable(option.pendingValue());
-                })
-                .binding(DEFAULTS.showContainerCoinWorth, () -> showContainerCoinWorth, val -> showContainerCoinWorth = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(showContainerExactCoinWorthOption)
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Gear Cooldowns in Item Slots"))
-                .binding(DEFAULTS.showItemSlotGearCooldowns, () -> showItemSlotGearCooldowns, val -> showItemSlotGearCooldowns = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Hide Gear Cooldowns in Action Bar"))
-                .binding(DEFAULTS.hideActionBarGearCooldowns, () -> hideActionBarGearCooldowns, val -> hideActionBarGearCooldowns = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .option(Option.<Boolean>createBuilder()
-                .name(Component.literal("Hide Gear Ability Fails in Action Bar"))
-                .description(OptionDescription.of(Component.literal(
-                    """
-                    Hides the action bar message that appears when a gear ability fails
-                    
-                    Examples:
-                    Out of Food
-                    Out of Experience / Out of Charge
-                    Lacks Charge
-                    """
-                )))
-                .binding(DEFAULTS.hideActionBarGearAbilityFail, () -> hideActionBarGearAbilityFail, val -> hideActionBarGearAbilityFail = val)
-                .controller(TickBoxControllerBuilder::create)
-                .build())
-
-            .build();
-
         // Ghost Seek
 
         Option<Float> breadcrumbLineWidthOption = Option.<Float>createBuilder()
@@ -312,14 +198,11 @@ public class Config {
             .build();
 
         return YetAnotherConfigLib.createBuilder()
-            .title(Component.literal("PlayerRelayClient Config"))
-
-            .category(generalCategory)
-            .category(ghostSeekCategory)
-
-            .save(this::saveToFile)
-            .build()
-            .generateScreen(parent);
+                .title(Component.literal("PlayerRelayClient Config"))
+                .category(ghostSeekCategory)
+                .save(this::saveToFile)
+                .build()
+                .generateScreen(parent);
     }
 
     public void saveToFile() {

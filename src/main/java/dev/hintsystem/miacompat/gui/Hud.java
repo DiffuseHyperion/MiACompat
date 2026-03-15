@@ -29,15 +29,12 @@ public class Hud implements HudElement {
     public static final int BAR_OVERLAY_HEIGHT = 5;
 
     private final GhostSeekCooldown ghostSeekCooldown;
-    private final CurseMeter curseMeter;
 
     public Hud() {
         ghostSeekCooldown = new GhostSeekCooldown();
-        curseMeter = new CurseMeter();
     }
 
     public void tick() {
-        curseMeter.tick();
     }
 
     @Override
@@ -45,6 +42,5 @@ public class Hud implements HudElement {
         if (!MiACompat.isMiAServer()) return;
 
         if (MiACompat.config.showGhostSeekCooldown) ghostSeekCooldown.render(guiGraphics, deltaTracker);
-        if (MiACompat.config.showCurseMeter) curseMeter.render(guiGraphics, deltaTracker);
     }
 }

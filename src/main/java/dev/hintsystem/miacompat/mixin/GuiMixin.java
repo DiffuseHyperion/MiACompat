@@ -1,6 +1,5 @@
 package dev.hintsystem.miacompat.mixin;
 
-import dev.hintsystem.miacompat.client.CooldownTracker;
 import dev.hintsystem.miacompat.MiACompat;
 
 import net.minecraft.client.gui.Gui;
@@ -20,8 +19,6 @@ public class GuiMixin {
         argsOnly = true
     )
     public Component miacompat$onOverlayMessage(Component message, @Cancellable CallbackInfo ci) {
-        if (!CooldownTracker.allowActionBarMessage(message)) { ci.cancel(); }
-
         return MiACompat.ghostSeekTracker.modifyActionbarMessage(message);
     }
 }

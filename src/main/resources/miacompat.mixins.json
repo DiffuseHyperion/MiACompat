@@ -3,14 +3,9 @@
     "package": "dev.hintsystem.miacompat.mixin",
     "compatibilityLevel": "JAVA_21",
     "client": [
-        "ChatListenerMixin",
-        "ClientBundleTooltipMixin",
         "GameRendererMixin",
         "GuiGraphicsAccessor",
-        "GuiGraphicsMixin",
-        "GuiMixin",
-        "ItemStackMixin",
-        "LocalPlayerMixin"
+        "GuiMixin"
     ],
     "injectors": {
         "defaultRequire": 1

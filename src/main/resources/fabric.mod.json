@@ -20,8 +20,7 @@
         ]
 	},
 	"mixins": [
-		"miacompat.mixins.json",
-        "miacompat.optional.mixins.json"
+		"miacompat.mixins.json"
 	],
 	"depends": {
 		"java": ">=21",
@@ -29,9 +28,5 @@
 		"fabricloader": ">=0.18.0",
 		"fabric-api": "*",
         "yet_another_config_lib_v3": "*"
-	},
-    "recommends": {
-        "xaerominimap": "*",
-        "xaeroworldmap": "*"
-    }
+	}
 }

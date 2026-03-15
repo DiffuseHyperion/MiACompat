@@ -1,7 +1,6 @@
 plugins {
 	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 }
 
 version = project.mod_version
@@ -41,58 +40,24 @@ repositories {
 
     maven { url "https://maven.terraformersmc.com/" } // Mod menu
     maven { url "https://maven.isxander.dev/releases" } // YACL
-    maven { url "https://maven.ryanliptak.com/" } // AppleSkin
 
     mavenCentral()
-}
-
-configurations {
-    xaeroLib
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.20.2:2023.10.08@zip")
+        parchment("org.parchmentmc.data:parchment-1.21.11:2025.12.20@zip")
     }
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    implementation include('org.yaml:snakeyaml:2.3') // For reading item config files
+    implementation "org.yaml:snakeyaml:2.3" // For reading item config files
 
     modImplementation "dev.isxander:yet-another-config-lib:3.8.2+1.21.11-fabric"
     modImplementation "com.terraformersmc:modmenu:17.0.0-beta.2"
-
-    modImplementation("squeek.appleskin:appleskin-fabric:mc1.21.11-3.0.8") {
-        exclude module: 'modmenu'
-    }
-
-    modImplementation 'maven.modrinth:ping-wheel:1.12.1-fabric,1.21.11'
-
-    modImplementation 'maven.modrinth:xaeros-minimap:fabric-1.21.11-25.3.5'
-    modImplementation 'maven.modrinth:xaeros-world-map:fabric-1.21.11-1.40.6'
-
-    xaeroLib 'maven.modrinth:xaeros-minimap:fabric-1.21.11-25.3.5'
-}
-
-// Extract xaerolib jar-in-jar dependency
-def xaeroLibDir = 'build/xaerolib'
-copy {
-    from(zipTree(configurations.xaeroLib.singleFile)) {
-        include 'META-INF/jars/xaerolib-*.jar'
-        eachFile { fcd ->
-            fcd.path = fcd.name
-        }
-    }
-    into xaeroLibDir
-    includeEmptyDirs = false
-}
-
-dependencies {
-    def libJar = fileTree(xaeroLibDir).matching { include '*.jar' }.singleFile
-    modImplementation files(libJar)
 }
 
 processResources {
@@ -133,25 +98,4 @@ publishing {
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
 	}
-}
-
-publishMods {
-    file = remapJar.archiveFile
-    additionalFiles.from(remapSourcesJar.archiveFile)
-
-    changelog = file("CHANGELOG.md").text
-    modLoaders.add("fabric")
-    type = STABLE
-
-    modrinth {
-        accessToken = project.findProperty("MODRINTH_API_KEY") ?: providers.environmentVariable("MODRINTH_API_KEY")
-        projectId = "Jmct2KwW"
-        minecraftVersions.addAll("1.21.11")
-
-        requires("fabric-api")
-        requires("yacl")
-        optional("xaeros-minimap")
-        optional("xaeros-world-map")
-        optional("ping-wheel")
-    }
 }

@@ -251,7 +251,9 @@ public class GhostSeekTracker {
 
         Inventory inventory = player.getInventory();
 
-        for (int slotIndex : InventoryTracker.PASSIVE_SLOTS) {
+        final int[] PASSIVE_SLOTS = {9, 10};
+
+        for (int slotIndex : PASSIVE_SLOTS) {
             ItemStack stack = inventory.getItem(slotIndex);
             if (isItemGhostSeek(stack)) {
                 cachedGhostSeekType = GhostSeekType.fromItemStack(stack);
