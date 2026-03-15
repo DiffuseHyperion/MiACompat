@@ -1,6 +1,6 @@
-package dev.hintsystem.miacompat.mixin;
+package com.diffusehyperion.dmm.mixins;
 
-import dev.hintsystem.miacompat.MiACompat;
+import com.diffusehyperion.dmm.DMM;
 
 import net.minecraft.client.renderer.GameRenderer;
 
@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GameRendererMixin {
     @Inject(method = "close", at = @At("RETURN"))
     private void miacompat$onGameRendererClose(CallbackInfo ci) {
-        MiACompat.close();
+        DMM.close();
     }
 }

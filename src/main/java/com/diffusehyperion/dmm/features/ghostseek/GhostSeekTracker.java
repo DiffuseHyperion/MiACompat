@@ -1,6 +1,6 @@
-package dev.hintsystem.miacompat.client;
+package com.diffusehyperion.dmm.features.ghostseek;
 
-import dev.hintsystem.miacompat.MiACompat;
+import com.diffusehyperion.dmm.DMM;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -55,7 +55,7 @@ public class GhostSeekTracker {
         }
 
         public int getColor(int maxRange) {
-            List<Color> measurementColors = MiACompat.config.breadcrumbColors;
+            List<Color> measurementColors = DMM.config.breadcrumbColors;
 
             if (pingLength != null) {
                 int index = Math.clamp(pingLength - 1, 0, measurementColors.size() - 1);
@@ -87,9 +87,9 @@ public class GhostSeekTracker {
     }
 
     public void tick(Minecraft client) {
-        if (MiACompat.config.breadcrumbDuration > 0) {
+        if (DMM.config.breadcrumbDuration > 0) {
             measurements.removeIf(m -> Instant.now().isAfter(
-                m.timestamp.plusSeconds(MiACompat.config.breadcrumbDuration)
+                m.timestamp.plusSeconds(DMM.config.breadcrumbDuration)
             ));
         }
 
@@ -115,16 +115,16 @@ public class GhostSeekTracker {
         addMeasurement(measurement);
 
         String range = "%d-%d blocks".formatted(pingRange.minInclusive(), pingRange.maxInclusive());
-        MiACompat.LOGGER.info("Ghost seek ping: {}, range: {}", pingLength, range);
+        DMM.LOGGER.info("Ghost seek ping: {}, range: {}", pingLength, range);
 
-        if (!MiACompat.config.ghostSeekDistanceHint && !MiACompat.config.pingColorMatchesBreadcrumb) return message;
+        if (!DMM.config.ghostSeekDistanceHint && !DMM.config.pingColorMatchesBreadcrumb) return message;
 
         MutableComponent editedMessage = message.copy();
-        if (MiACompat.config.ghostSeekDistanceHint) {
+        if (DMM.config.ghostSeekDistanceHint) {
             editedMessage.append(" (" + range + ")");
         }
 
-        if (MiACompat.config.pingColorMatchesBreadcrumb) {
+        if (DMM.config.pingColorMatchesBreadcrumb) {
             editedMessage.setStyle(Style.EMPTY.withColor(measurement.getColor(type.getMaxRange())));
         }
 
@@ -134,7 +134,7 @@ public class GhostSeekTracker {
     public List<Measurement> getMeasurements() { return new ArrayList<>(measurements); }
 
     public void addMeasurement(Measurement measurement) {
-        if (MiACompat.config.breadcrumbDuration <= 0) return;
+        if (DMM.config.breadcrumbDuration <= 0) return;
 
         for (Measurement existing : measurements) {
             if (existing.position.distanceTo(measurement.position) < MIN_MEASUREMENT_DISTANCE) return;
@@ -146,7 +146,7 @@ public class GhostSeekTracker {
     public void clearMeasurements() { measurements.clear(); }
 
     public boolean breadcrumbsVisible() {
-        return MiACompat.config.breadcrumbDuration > 0
+        return DMM.config.breadcrumbDuration > 0
             && getGhostSeekType() != null;
     }
 

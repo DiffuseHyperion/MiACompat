@@ -1,6 +1,6 @@
-package dev.hintsystem.miacompat.client;
+package com.diffusehyperion.dmm.features.ghostseek;
 
-import dev.hintsystem.miacompat.MiACompat;
+import com.diffusehyperion.dmm.DMM;
 
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 
@@ -36,7 +36,7 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 
 public class GhostSeekRenderer {
-    private static final String RENDER_LABEL = MiACompat.MOD_ID + " ghost seek renderer";
+    private static final String RENDER_LABEL = DMM.MOD_ID + " ghost seek renderer";
 
     private static final ByteBufferBuilder allocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
 
@@ -46,14 +46,14 @@ public class GhostSeekRenderer {
 
     public static final RenderLayer QUADS_THROUGH_WALLS = new RenderLayer(RenderPipelines.register(
         RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(MiACompat.id("pipeline/quads_through_walls"))
+            .withLocation(DMM.id("pipeline/quads_through_walls"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .build()
     ));
 
     public static final RenderLayer LINES_THROUGH_WALLS = new RenderLayer(RenderPipelines.register(
         RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
-            .withLocation(MiACompat.id("pipeline/lines_through_walls"))
+            .withLocation(DMM.id("pipeline/lines_through_walls"))
             .withVertexShader("core/rendertype_lines")
             .withFragmentShader("core/rendertype_lines_no_fog")
             .withBlend(BlendFunction.TRANSLUCENT).withCull(false).withDepthWrite(false)
@@ -106,7 +106,7 @@ public class GhostSeekRenderer {
         matrices.translate(-camera.x, -camera.y, -camera.z);
 
         // Extraction phase
-        BreadcrumbRenderType breadcrumbType = MiACompat.config.breadcrumbRenderType;
+        BreadcrumbRenderType breadcrumbType = DMM.config.breadcrumbRenderType;
         submitBreadcrumbs(matrices, camera, breadcrumbType);
 
         matrices.popPose();
@@ -122,21 +122,21 @@ public class GhostSeekRenderer {
         for (GhostSeekTracker.Measurement m : measurements) {
 
             float t = (float) Math.clamp(m.distance / maxDistance, 0.0, 1.0);
-            float strength = (float) MiACompat.config.breadcrumbDistanceScale * 1.5f;
+            float strength = (float) DMM.config.breadcrumbDistanceScale * 1.5f;
             float growthFactor = strength >= 0
                 ? t * strength
                 : (1.0f - t) * -strength;
 
             float scale = 1.0f + growthFactor;
-            float size = (MiACompat.config.breadcrumbSize * scale);
+            float size = (DMM.config.breadcrumbSize * scale);
 
-            int color = ARGB.color((float) MiACompat.config.breadcrumbOpacity, m.getColor(maxDistance));
+            int color = ARGB.color((float) DMM.config.breadcrumbOpacity, m.getColor(maxDistance));
 
             switch (breadcrumbType) {
                 case WIREFRAME_BOX -> {
                     float cameraDistance = (float) Math.max(camera.distanceTo(m.position) - size, 0);
                     float lineScale = Math.min(6 / cameraDistance, 1f);
-                    float scaledLineWidth = Math.max(MiACompat.config.breadcrumbLineWidth * lineScale, 2f);
+                    float scaledLineWidth = Math.max(DMM.config.breadcrumbLineWidth * lineScale, 2f);
 
                     renderOutlinedBox(matrices, buffer, m.position, size, color, scaledLineWidth);
                 }

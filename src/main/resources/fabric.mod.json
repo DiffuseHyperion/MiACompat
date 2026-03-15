@@ -1,22 +1,22 @@
 {
 	"schemaVersion": 1,
-	"id": "miacompat",
+	"id": "dmm",
 	"version": "${version}",
-	"name": "MiACompat",
-	"description": "Adds Xaeros minimap / map mod support to the Mine in Abyss minecraft server",
-	"authors": ["HintSystem"],
+	"name": "Diffuse's MiA Mod",
+	"description": "Experimental QOL mod for the Ghost Seek in the Mine In Abyss Server. Based on HintSystem's MiACompat, named after Danker's Skyblock Mod.",
+	"authors": ["DiffuseHyperion", "HintSystem"],
 	"contact": {
 		"sources": "https://github.com/HintSystem/MiACompat"
 	},
 	"license": "GNU GPL",
-	"icon": "assets/miacompat/icon.png",
+	"icon": "assets/dmm/icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"dev.hintsystem.miacompat.MiACompat"
+			"com.diffusehyperion.dmm.DMM"
 		],
         "modmenu": [
-            "dev.hintsystem.miacompat.mods.SupportModMenu"
+			"com.diffusehyperion.dmm.mods.modmenu.SupportModMenu"
         ]
 	},
 	"mixins": [

@@ -1,10 +1,9 @@
 {
     "required": true,
-    "package": "dev.hintsystem.miacompat.mixin",
+    "package": "com.diffusehyperion.dmm.mixins",
     "compatibilityLevel": "JAVA_21",
     "client": [
         "GameRendererMixin",
-        "GuiGraphicsAccessor",
         "GuiMixin"
     ],
     "injectors": {

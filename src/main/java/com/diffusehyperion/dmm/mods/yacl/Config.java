@@ -1,7 +1,7 @@
-package dev.hintsystem.miacompat.config;
+package com.diffusehyperion.dmm.mods.yacl;
 
-import dev.hintsystem.miacompat.client.GhostSeekRenderer;
-import dev.hintsystem.miacompat.MiACompat;
+import com.diffusehyperion.dmm.features.ghostseek.GhostSeekRenderer;
+import com.diffusehyperion.dmm.DMM;
 
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
@@ -23,7 +23,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 public class Config {
-    private static final Path SAVE_PATH = MiACompat.CONFIG_DIR.resolve(MiACompat.MOD_ID + ".json");
+    private static final Path SAVE_PATH = DMM.CONFIG_DIR.resolve(DMM.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder()
         .setPrettyPrinting()
         .registerTypeAdapter(Color.class, new ColorTypeAdapter())
@@ -220,7 +220,7 @@ public class Config {
 
             Files.writeString(SAVE_PATH, GSON.toJson(root));
         } catch (Exception e) {
-            MiACompat.LOGGER.error("Failed to serialize config at {}", SAVE_PATH, e);
+            DMM.LOGGER.error("Failed to serialize config at {}", SAVE_PATH, e);
         }
     }
 
@@ -243,7 +243,7 @@ public class Config {
 
     public void loadFromFile() {
         if (!Files.exists(SAVE_PATH)) {
-            MiACompat.LOGGER.info("Config file not found at {}, using default", SAVE_PATH);
+            DMM.LOGGER.info("Config file not found at {}, using default", SAVE_PATH);
             saveToFile();
             return;
         }
@@ -265,7 +265,7 @@ public class Config {
                 }
             }
         } catch (Exception e) {
-            MiACompat.LOGGER.error("Failed to deserialize config from {}", SAVE_PATH, e);
+            DMM.LOGGER.error("Failed to deserialize config from {}", SAVE_PATH, e);
         }
     }
 }

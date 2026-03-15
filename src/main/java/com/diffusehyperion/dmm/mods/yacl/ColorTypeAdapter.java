@@ -1,4 +1,4 @@
-package dev.hintsystem.miacompat.config;
+package com.diffusehyperion.dmm.mods.yacl;
 
 import com.google.gson.*;
 

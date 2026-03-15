@@ -1,7 +1,8 @@
-package dev.hintsystem.miacompat.gui;
+package com.diffusehyperion.dmm.gui;
 
-import dev.hintsystem.miacompat.MiACompat;
+import com.diffusehyperion.dmm.DMM;
 
+import com.diffusehyperion.dmm.features.ghostseek.gui.GhostSeekCooldown;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 
 import net.minecraft.client.DeltaTracker;
@@ -24,7 +25,7 @@ public class Hud implements HudElement {
             )).build()
     );
 
-    public static final Identifier BAR_OVERLAY = MiACompat.id("textures/gui/bar_overlay.png");
+    public static final Identifier BAR_OVERLAY = DMM.id("textures/gui/bar_overlay.png");
     public static final int BAR_OVERLAY_WIDTH = 60;
     public static final int BAR_OVERLAY_HEIGHT = 5;
 
@@ -36,8 +37,8 @@ public class Hud implements HudElement {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
-        if (!MiACompat.isMiAServer()) return;
+        if (!DMM.isMiAServer()) return;
 
-        if (MiACompat.config.showGhostSeekCooldown) ghostSeekCooldown.render(guiGraphics, deltaTracker);
+        if (DMM.config.showGhostSeekCooldown) ghostSeekCooldown.render(guiGraphics, deltaTracker);
     }
 }
