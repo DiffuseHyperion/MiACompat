@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
     @Inject(method = "close", at = @At("RETURN"))
     private void miacompat$onGameRendererClose(CallbackInfo ci) {
         MiACompat.close();

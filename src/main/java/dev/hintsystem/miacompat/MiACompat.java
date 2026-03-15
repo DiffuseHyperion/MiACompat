@@ -1,11 +1,14 @@
 package dev.hintsystem.miacompat;
 
-import dev.hintsystem.miacompat.client.*;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import dev.hintsystem.miacompat.client.GhostSeekRenderer;
+import dev.hintsystem.miacompat.client.GhostSeekTracker;
 import dev.hintsystem.miacompat.config.Config;
 import dev.hintsystem.miacompat.gui.Hud;
-
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
@@ -13,9 +16,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.api.ClientModInitializer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.resources.Identifier;
@@ -23,10 +23,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Interaction;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 
 public class MiACompat implements ClientModInitializer {
@@ -54,10 +53,8 @@ public class MiACompat implements ClientModInitializer {
 
         Minecraft client = Minecraft.getInstance();
 
-        ClientTickEvents.END_CLIENT_TICK.register(c -> {
-            ghostSeekTracker.tick(c);
-            // hud.tick(); tick method empty for now
-        });
+        // hud.tick(); tick method empty for now
+        ClientTickEvents.END_CLIENT_TICK.register(ghostSeekTracker::tick);
 
         HudElementRegistry.attachElementBefore(VanillaHudElements.HELD_ITEM_TOOLTIP, id("miacompat_hud"), hud);
 
@@ -83,41 +80,39 @@ public class MiACompat implements ClientModInitializer {
             return InteractionResult.PASS;
         });
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-
-            dispatcher.register(ClientCommandManager.literal("miacompat")
-                .then(ClientCommandManager.literal("config")
-                    .executes(context -> {
-                        client.schedule(() -> client.setScreen(config.createScreen(null)));
-                        return 1;
-                    })
-                )
-                .then(ClientCommandManager.literal("breadcrumbs")
-                    .then(ClientCommandManager.literal("add")
-                        .then(ClientCommandManager.argument("pingLength", IntegerArgumentType.integer(0, 5))
-                            .executes(context -> {
-                                if (client.player == null) return 0;
-
-                                int pingLength = IntegerArgumentType.getInteger(context, "pingLength");
-
-                                GhostSeekTracker.GhostSeekType ghostSeekType = GhostSeekTracker.GhostSeekType.REFINED;
-                                ghostSeekTracker.awaitingPingTicks = ghostSeekType.pingIntervalTicks;
-                                ghostSeekTracker.addMeasurement(
-                                    ghostSeekType.getPingMeasurement(client.player.position(), pingLength)
-                                );
-                                return 1;
-                            })
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+                dispatcher.register(ClientCommandManager.literal("miacompat")
+                        .then(ClientCommandManager.literal("config")
+                                .executes(context -> {
+                                    client.schedule(() -> client.setScreen(config.createScreen(null)));
+                                    return 1;
+                                })
                         )
-                    )
-                    .then(ClientCommandManager.literal("clear")
-                        .executes(context -> {
-                            ghostSeekTracker.clearMeasurements();
-                            return 1;
-                        })
-                    )
-                )
-            );
-        });
+                        .then(ClientCommandManager.literal("breadcrumbs")
+                                .then(ClientCommandManager.literal("add")
+                                        .then(ClientCommandManager.argument("pingLength", IntegerArgumentType.integer(0, 5))
+                                                .executes(context -> {
+                                                    if (client.player == null) return 0;
+
+                                                    int pingLength = IntegerArgumentType.getInteger(context, "pingLength");
+
+                                                    GhostSeekTracker.GhostSeekType ghostSeekType = GhostSeekTracker.GhostSeekType.REFINED;
+                                                    ghostSeekTracker.awaitingPingTicks = ghostSeekType.pingIntervalTicks;
+                                                    ghostSeekTracker.addMeasurement(
+                                                            ghostSeekType.getPingMeasurement(client.player.position(), pingLength)
+                                                    );
+                                                    return 1;
+                                                })
+                                        )
+                                )
+                                .then(ClientCommandManager.literal("clear")
+                                        .executes(context -> {
+                                            ghostSeekTracker.clearMeasurements();
+                                            return 1;
+                                        })
+                                )
+                        )
+                ));
 	}
 
     private void onRenderWorld(WorldRenderContext context) {

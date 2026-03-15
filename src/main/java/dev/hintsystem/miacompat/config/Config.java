@@ -145,9 +145,7 @@ public class Config {
                     Adjusts how breadcrumbs are rendered.
                     """
                 )))
-                .addListener((option, event) -> {
-                    breadcrumbLineWidthOption.setAvailable(option.pendingValue() == GhostSeekRenderer.BreadcrumbRenderType.WIREFRAME_BOX);
-                })
+                .addListener((option, event) -> breadcrumbLineWidthOption.setAvailable(option.pendingValue() == GhostSeekRenderer.BreadcrumbRenderType.WIREFRAME_BOX))
                 .binding(DEFAULTS.breadcrumbRenderType, () -> breadcrumbRenderType, val -> breadcrumbRenderType = val)
                 .controller(opt -> EnumControllerBuilder.create(opt)
                     .enumClass(GhostSeekRenderer.BreadcrumbRenderType.class))

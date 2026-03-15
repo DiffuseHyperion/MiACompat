@@ -34,9 +34,6 @@ public class Hud implements HudElement {
         ghostSeekCooldown = new GhostSeekCooldown();
     }
 
-    public void tick() {
-    }
-
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
         if (!MiACompat.isMiAServer()) return;
