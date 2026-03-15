@@ -1,7 +1,7 @@
 package com.diffusehyperion.dmm.features.ghostseek.gui;
 
 import com.diffusehyperion.dmm.features.ghostseek.GhostSeekFeature;
-import com.diffusehyperion.dmm.features.ghostseek.GhostSeekTracker;
+import com.diffusehyperion.dmm.features.ghostseek.legacy.GhostSeekTracker;
 import com.diffusehyperion.dmm.DMM;
 
 import com.diffusehyperion.dmm.gui.Hud;

@@ -1,4 +1,4 @@
-package com.diffusehyperion.dmm.features.ghostseek;
+package com.diffusehyperion.dmm.features.ghostseek.legacy;
 
 import com.diffusehyperion.dmm.DMM;
 

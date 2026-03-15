@@ -1,6 +1,6 @@
 package com.diffusehyperion.dmm.mods.yacl;
 
-import com.diffusehyperion.dmm.features.ghostseek.GhostSeekRenderer;
+import com.diffusehyperion.dmm.features.ghostseek.legacy.GhostSeekRenderer;
 import com.diffusehyperion.dmm.DMM;
 
 import dev.isxander.yacl3.api.*;
