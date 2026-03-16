@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Display;
@@ -27,7 +26,8 @@ public class GhostSeekFeature extends Feature {
     public final GhostSeekTracker ghostSeekTracker = new GhostSeekTracker();
     public final GhostSeekRenderer ghostSeekRenderer = new GhostSeekRenderer(ghostSeekTracker);
 
-    public final GhostSeekActiveItem ghostSeekActiveItem = new GhostSeekActiveItem();
+    public final GhostSeekActiveItemManager ghostSeekActiveItemManager = new GhostSeekActiveItemManager();
+    public final GhostSeekPingManager ghostSeekPingManager = new GhostSeekPingManager();
 
     @Override
     public void initialize() {
@@ -54,8 +54,8 @@ public class GhostSeekFeature extends Feature {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return message;
 
-        Pair<GhostSeekItemType, ItemStack> ghostSeekPair = ghostSeekActiveItem.getGhostSeek();
-        if (ghostSeekPair == null) return null;
+        Pair<GhostSeekItemType, ItemStack> ghostSeekPair = ghostSeekActiveItemManager.getGhostSeek();
+        if (ghostSeekPair == null) return message;
 
         // get ping distance range
         GhostSeekItemType ghostSeekItemType = ghostSeekPair.getFirst();
@@ -73,11 +73,11 @@ public class GhostSeekFeature extends Feature {
         // awaitingPingTicks = type.pingIntervalTicks; for gui
         InclusiveRange<@NotNull Integer> pingRange = ghostSeekItemType.getPingRange(pingLength);
 
+        // create ping
+        GhostSeekPing ghostSeekPing = new GhostSeekPing(player.position(), pingRange.minInclusive(), pingRange.maxInclusive());
+        ghostSeekPingManager.addPing(ghostSeekPing);
 
-
-        GhostSeekTracker.Measurement measurement = type.getPingMeasurement(player.position(), pingLength);
-        addMeasurement(measurement);
-
+        // handle modification
         String range = "%d-%d blocks".formatted(pingRange.minInclusive(), pingRange.maxInclusive());
         DMM.LOGGER.info("Ghost seek ping: {}, range: {}", pingLength, range);
 
@@ -88,9 +88,11 @@ public class GhostSeekFeature extends Feature {
             editedMessage.append(" (" + range + ")");
         }
 
+        /*
         if (DMM.config.pingColorMatchesBreadcrumb) {
             editedMessage.setStyle(Style.EMPTY.withColor(measurement.getColor(type.getMaxRange())));
         }
+         */
 
         return editedMessage;
     }

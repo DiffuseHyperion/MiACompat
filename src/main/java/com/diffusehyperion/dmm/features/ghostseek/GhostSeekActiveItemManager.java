@@ -13,7 +13,7 @@ import java.time.Instant;
 
 import static com.diffusehyperion.dmm.DMM.LOGGER;
 
-public class GhostSeekActiveItem {
+public class GhostSeekActiveItemManager {
     private static final String GHOST_SEEK_ITEM_NAME = "ghost seek";
 
     private GhostSeekItemType cachedGhostSeekItemType;

@@ -13,17 +13,15 @@ public enum GhostSeekItemType {
     REPAIRED("repaired", 20, new int[] {200, 150, 100, 50, 25}),
     REFINED("refined", 15, new int[] {250, 150, 100, 50, 25});
 
-    private final String itemName;
+    public final String itemName;
     public final int pingIntervalTicks;
-    private final int[] ranges;
+    public final int[] ranges;
 
     GhostSeekItemType(String itemName, int pingIntervalSec, int[] ranges) {
         this.itemName = itemName;
         this.pingIntervalTicks = pingIntervalSec * 20;
         this.ranges = ranges;
     }
-
-    public int getMaxRange() { return ranges[0]; }
 
     public InclusiveRange<@NotNull Integer> getPingRange(int pingLength) {
         int rangeIndex = Math.clamp(pingLength - 1, 0, ranges.length - 1);
@@ -32,18 +30,6 @@ public enum GhostSeekItemType {
 
         return new InclusiveRange<>(minDistance, maxDistance);
     }
-
-        /*
-        public GhostSeekTracker.Measurement getPingMeasurement(Vec3 pos, int pingLength) {
-            InclusiveRange<@NotNull Integer> pingRange = getPingRange(pingLength);
-
-            double midDistance = (pingRange.maxInclusive() + pingRange.minInclusive()) / 2.0;
-            double uncertainty = (pingRange.maxInclusive() - pingRange.minInclusive()) / 2.0;
-
-            return new GhostSeekTracker.Measurement(pos, midDistance, uncertainty, pingLength);
-        }
-
-         */
 
     public static GhostSeekItemType fromItemStack(ItemStack stack) {
         Component itemName = stack.get(DataComponents.ITEM_NAME);
