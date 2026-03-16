@@ -19,6 +19,6 @@ public abstract class GuiMixin {
         argsOnly = true
     )
     public Component miacompat$onOverlayMessage(Component message) {
-        return ((GhostSeekFeature) DMM.featureManager.getFeature(GhostSeekFeature.class)).ghostSeekTracker.modifyActionbarMessage(message);
+        return ((GhostSeekFeature) DMM.featureManager.getFeature(GhostSeekFeature.class)).onGhostSeekTriggered(message);
     }
 }

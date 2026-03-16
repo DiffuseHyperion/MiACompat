@@ -1,7 +1,6 @@
 package com.diffusehyperion.dmm.features.ghostseek.gui;
 
-import com.diffusehyperion.dmm.features.ghostseek.GhostSeekFeature;
-import com.diffusehyperion.dmm.features.ghostseek.legacy.GhostSeekTracker;
+import com.diffusehyperion.dmm.features.ghostseek.GhostSeekItemType;
 import com.diffusehyperion.dmm.DMM;
 
 import com.diffusehyperion.dmm.gui.Hud;
@@ -15,40 +14,37 @@ import net.minecraft.util.ARGB;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.awt.*;
 
-public class GhostSeekCooldown implements HudElement {
+public class GhostSeekCooldownElement implements HudElement {
     private static final Identifier BAR_BACKGROUND = DMM.id("textures/gui/cooldown_bar.png");
     private static final int BAR_BACKGROUND_WIDTH = 194;
     private static final int BAR_BACKGROUND_HEIGHT = 11;
 
-    private Integer lastColor;
+    private Color colour;
+    private float cooldownTicks;
+    private float maxCooldownTicks;
+
+    public void onGhostSeekCooldownStart(GhostSeekItemType ghostSeekItemType, Color sequenceColour) {
+        colour = sequenceColour;
+        cooldownTicks = 0;
+        maxCooldownTicks = ghostSeekItemType.pingCooldownSecs * 20;
+    }
+
+    public void tick() {
+        cooldownTicks++;
+    }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
-        GhostSeekFeature ghostSeekFeature = (GhostSeekFeature) DMM.featureManager.getFeature(GhostSeekFeature.class);
-        GhostSeekTracker ghostSeekTracker = ghostSeekFeature.ghostSeekTracker;
-        GhostSeekTracker.GhostSeekType ghostSeekType = ghostSeekTracker.getLastGhostSeekType();
-        List<GhostSeekTracker.Measurement> measurements = ghostSeekTracker.getMeasurements();
-
-        if (!measurements.isEmpty()) {
-            lastColor = measurements.getLast().getColor(ghostSeekTracker.getMaxRange());
-        }
-
-        if (ghostSeekType == null) { ghostSeekType = GhostSeekTracker.GhostSeekType.REFINED; }
-        if (lastColor == null) return;
-
-        float maxCooldown = ghostSeekType.pingIntervalTicks;
-        int cooldown = ghostSeekTracker.awaitingPingTicks;
-
-        if (cooldown == 0) return;
+        if (cooldownTicks <= 0 || cooldownTicks > maxCooldownTicks) return;
 
         int xPos = guiGraphics.guiWidth() / 2;
         int yPos = guiGraphics.guiHeight() - 52;
         int bgY = yPos - BAR_BACKGROUND_HEIGHT;
         int filledY = bgY + 3;
 
-        float progress = cooldown / maxCooldown;
+        float progress = cooldownTicks / maxCooldownTicks;
         int halfWidth = (int) (progress * Hud.BAR_OVERLAY_WIDTH);
 
         int bgCapWidth = 6;
@@ -68,7 +64,7 @@ public class GhostSeekCooldown implements HudElement {
             alpha = 1f;
         }
 
-        int colorAlpha = ARGB.color(alpha, lastColor);
+        int colorAlpha = ARGB.color(alpha, colour.getRGB());
         int whiteAlpha = ARGB.color(alpha, -1);
 
         // Left side cap and bar outline

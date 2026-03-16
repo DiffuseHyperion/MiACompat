@@ -9,10 +9,14 @@ The mod will need to capture the type of ghost seek currently active.
    1. If the ping is more than (Ghost Seek max distance * 2) blocks away from any other pings, a new list is created with the ping inside. The list will be called a sequence.
    2. Otherwise, the ping is added to the sequence which has the ping within reasonable distance to the new ping.
 2. When a new ping is created, the origin should be shown to the user along with its type and sequence.
-3. Afterward, show a spherical shell / hollow sphere, where...
-   1. The origin is the ping's origin,
-   2. r, or the inner sphere's radius, is the minimum in the distance range of the ping
-   3. R, or the outer sphere's radius, is the maximum in the distance range of the ping
+3. Afterward, highlight blocks **which the block above them**...
+   1. Is an air block
+   2. Have their adjacent 2 blocks in all directions be air blocks too
+      1. Based on a theory I heard - skeletons need a 5x5 space to spawn
+   3. Is within the intersections of all spherical shells / hollow spheres created from all pings within the sequence where...
+      1. The origin is the ping's origin,
+      2. r, or the inner sphere's radius, is the minimum in the distance range of the ping
+      3. R, or the outer sphere's radius, is the maximum in the distance range of the ping
 4. If the ping is not the first in the sequence, the intersection between the spherical shells should be shown to the user. This is the region where the skeleton must be within.
 5. When the skeleton is claimed, delete any sequence where the possible range contains the skeleton.
 

@@ -14,12 +14,12 @@ public enum GhostSeekItemType {
     REFINED("refined", 15, new int[] {250, 150, 100, 50, 25});
 
     public final String itemName;
-    public final int pingIntervalTicks;
+    public final int pingCooldownSecs;
     public final int[] ranges;
 
-    GhostSeekItemType(String itemName, int pingIntervalSec, int[] ranges) {
+    GhostSeekItemType(String itemName, int pingCooldownSecs, int[] ranges) {
         this.itemName = itemName;
-        this.pingIntervalTicks = pingIntervalSec * 20;
+        this.pingCooldownSecs = pingCooldownSecs;
         this.ranges = ranges;
     }
 

@@ -2,7 +2,7 @@ package com.diffusehyperion.dmm.gui;
 
 import com.diffusehyperion.dmm.DMM;
 
-import com.diffusehyperion.dmm.features.ghostseek.gui.GhostSeekCooldown;
+import com.diffusehyperion.dmm.features.ghostseek.gui.GhostSeekCooldownElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 
 import net.minecraft.client.DeltaTracker;
@@ -15,6 +15,9 @@ import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Hud implements HudElement {
     public static final RenderPipeline GUI_TEXTURED_MULTIPLY = RenderPipelines.register(
@@ -29,16 +32,14 @@ public class Hud implements HudElement {
     public static final int BAR_OVERLAY_WIDTH = 60;
     public static final int BAR_OVERLAY_HEIGHT = 5;
 
-    private final GhostSeekCooldown ghostSeekCooldown;
-
-    public Hud() {
-        ghostSeekCooldown = new GhostSeekCooldown();
-    }
+    public static final List<HudElement> hudElements = new ArrayList<>();
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
         if (!DMM.isMiAServer()) return;
 
-        if (DMM.config.showGhostSeekCooldown) ghostSeekCooldown.render(guiGraphics, deltaTracker);
+        for (HudElement hudElement : hudElements) {
+            hudElement.render(guiGraphics, deltaTracker);
+        }
     }
 }

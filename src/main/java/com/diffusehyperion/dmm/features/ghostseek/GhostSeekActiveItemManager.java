@@ -17,14 +17,13 @@ public class GhostSeekActiveItemManager {
     private static final String GHOST_SEEK_ITEM_NAME = "ghost seek";
 
     private GhostSeekItemType cachedGhostSeekItemType;
-    private ItemStack cachedGhostSeek;
     private long cacheExpireTime;
 
-    public @Nullable Pair<GhostSeekItemType, ItemStack> getGhostSeek() {
+    public @Nullable GhostSeekItemType getGhostSeek() {
         long currentTime = Instant.now().toEpochMilli();
 
         // Use cache to avoid repeated inventory checks
-        if (currentTime < cacheExpireTime) return new Pair<>(cachedGhostSeekItemType, cachedGhostSeek);
+        if (currentTime < cacheExpireTime) return cachedGhostSeekItemType;
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
@@ -40,9 +39,8 @@ public class GhostSeekActiveItemManager {
             ItemStack stack = inventory.getItem(slotIndex);
             if (isItemGhostSeek(stack)) {
                 cachedGhostSeekItemType = GhostSeekItemType.fromItemStack(stack);
-                cachedGhostSeek = stack;
                 cacheExpireTime = currentTime + 20;
-                return new Pair<>(cachedGhostSeekItemType, cachedGhostSeek);
+                return cachedGhostSeekItemType;
             }
         }
 
