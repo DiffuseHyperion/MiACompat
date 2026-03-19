@@ -4,10 +4,16 @@ import com.diffusehyperion.dmm.DMM;
 import com.diffusehyperion.dmm.features.Feature;
 import com.diffusehyperion.dmm.features.ghostseek.gui.GhostSeekCooldownElement;
 import com.diffusehyperion.dmm.gui.Hud;
+import com.jcraft.jorbis.Block;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.arguments.coordinates.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static com.diffusehyperion.dmm.DMM.config;
@@ -39,6 +46,25 @@ public class GhostSeekFeature extends Feature {
         AttackEntityCallback.EVENT.register(this::onEntityAttacked);
 
         Hud.hudElements.add(this.ghostSeekCooldownElement);
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
+                ClientCommandManager.literal("debug_ghost")
+                        .then(ClientCommandManager.argument("innerRadius", IntegerArgumentType.integer())
+                                .then(ClientCommandManager.argument("outerRadius", IntegerArgumentType.integer())
+                                        .executes(context -> {
+                                            int innerRadius = IntegerArgumentType.getInteger(context, "innerRadius");
+                                            int outerRadius = IntegerArgumentType.getInteger(context, "outerRadius");
+
+                                            GhostSeekPing ghostSeekPing = new GhostSeekPing(Minecraft.getInstance().player.blockPosition(), innerRadius, outerRadius);
+                                            GhostSeekPingSequence ghostSeekPingSequence = ghostSeekPingManager.addPing(ghostSeekPing);
+
+                                            context.getSource().sendFeedback(Component.literal("Created a new ping."));
+                                            return 1;
+                                        })
+                                )
+                        )
+                )
+        );
     }
 
     private void tick(Minecraft minecraft) {
@@ -66,7 +92,7 @@ public class GhostSeekFeature extends Feature {
         InclusiveRange<@NotNull Integer> pingRange = ghostSeekItemType.getPingRange(pingLength);
 
         // create ping
-        GhostSeekPing ghostSeekPing = new GhostSeekPing(player.position(), pingRange.minInclusive(), pingRange.maxInclusive());
+        GhostSeekPing ghostSeekPing = new GhostSeekPing(player.blockPosition(), pingRange.minInclusive(), pingRange.maxInclusive());
         GhostSeekPingSequence ghostSeekPingSequence = ghostSeekPingManager.addPing(ghostSeekPing);
 
         ghostSeekCooldownElement.onGhostSeekCooldownStart(ghostSeekItemType, ghostSeekPingSequence.colour);

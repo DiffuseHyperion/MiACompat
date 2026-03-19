@@ -1,6 +1,6 @@
 package com.diffusehyperion.dmm.features.ghostseek;
 
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.BlockPos;
 
-public record GhostSeekPing(Vec3 origin, double minDistance, double maxDistance) {
+public record GhostSeekPing(BlockPos origin, int minDistance, int maxDistance) {
 }

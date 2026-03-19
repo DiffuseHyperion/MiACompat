@@ -1,6 +1,5 @@
 package com.diffusehyperion.dmm.mods.yacl;
 
-import com.diffusehyperion.dmm.features.ghostseek.legacy.GhostSeekRenderer;
 import com.diffusehyperion.dmm.DMM;
 
 import dev.isxander.yacl3.api.*;
@@ -36,7 +35,6 @@ public class Config {
     public boolean ghostSeekDistanceHint = true;
     public boolean clearBreadcrumbsOnFind = true;
     public int breadcrumbDuration = 300;
-    public GhostSeekRenderer.BreadcrumbRenderType breadcrumbRenderType = GhostSeekRenderer.BreadcrumbRenderType.FILLED_BOX;
     public float breadcrumbLineWidth = 8f;
     public float breadcrumbSize = 0.8f;
     public double breadcrumbDistanceScale = 0.5f;
@@ -136,19 +134,6 @@ public class Config {
                     .formatValue(val -> Component.literal(String.format("%ds", val)))
                     .step(5)
                     .range(0, 3_600))
-                .build())
-
-            .option(Option.<GhostSeekRenderer.BreadcrumbRenderType>createBuilder()
-                .name(Component.literal("Breadcrumb Visual Type"))
-                .description(OptionDescription.of(Component.literal(
-                    """
-                    Adjusts how breadcrumbs are rendered.
-                    """
-                )))
-                .addListener((option, event) -> breadcrumbLineWidthOption.setAvailable(option.pendingValue() == GhostSeekRenderer.BreadcrumbRenderType.WIREFRAME_BOX))
-                .binding(DEFAULTS.breadcrumbRenderType, () -> breadcrumbRenderType, val -> breadcrumbRenderType = val)
-                .controller(opt -> EnumControllerBuilder.create(opt)
-                    .enumClass(GhostSeekRenderer.BreadcrumbRenderType.class))
                 .build())
 
             .option(breadcrumbLineWidthOption)
